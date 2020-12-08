@@ -19,7 +19,8 @@
     "momentjs": "^2.0.0",
     "mysql2": "^2.1.0",
     "pdfkit": "^0.11.0",
-    "sequelize": "^5.21.12"
+    "sequelize": "^5.21.12",
+    "sib-api-v3-sdk": "^8.0.2"
   },
   "devDependencies": {
     "node-xlsx": "^0.15.0",

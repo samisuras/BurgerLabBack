@@ -5,6 +5,45 @@ exports.order = async (req, res) => {
     const createOrder = "INSERT INTO orden (precio) VALUES (?)"
     const createOrderUser = "INSERT INTO orden_usuario (idorden,correo,fecha) VALUES(?,?,?)"
     const createIngredientOrder = "INSERT INTO ingrediente_orden (ingrediente,idorden,cantidad) VALUES(?,?,?)"
+    const SibApiV3Sdk = require('sib-api-v3-sdk');
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    const apiKey = defaultClient.authentications['api-key'];
+    
+    
+    apiKey.apiKey = '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';
+
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+    sendSmtpEmail.subject = "Orden Recibidia";
+    sendSmtpEmail.htmlContent = `<html>
+    <body>
+    <h1>Tu orden de tu hamburguesa ha sido recibida</h1>
+    <p>Tu hamburguesa contiene los siguientes ingredientes: </p>
+    <ul>
+    ${ingredients}
+    </ul>
+    <p>Total: ${total}</p>
+    </body>
+    </html>`;
+    sendSmtpEmail.sender = { "name": "Burger Lab", "email": "orden@burgerlab.com" };
+    sendSmtpEmail.to = [{ "email": correo, "name": "Estimado Cliente" }];
+    sendSmtpEmail.headers = { "Some-Custom-Name": "unique-id-1234" };
+    sendSmtpEmail.params = { "subject": "Nueva Orden" };
+    try {
+        apiInstance.sendTransacEmail(sendSmtpEmail).then(function (data) {
+            console.log('API called successfully. Returned data: ' + JSON.stringify(data));
+        }, function (error) {
+            console.error(error);
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            error
+        })
+    }
+
     try {
         const [orden] = await pool.query(createOrder, [total])
         await pool.query(createOrderUser, [orden.insertId, correo, new Date().toISOString().split('T')[0]])
