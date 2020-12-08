@@ -6,6 +6,7 @@ const cors = require('cors')
 //rutas
 const loginRoutes = require('./routes/login')
 const ordenRoutes = require('./routes/venta')
+const reportesRoutes = require('./routes/reportes')
 
 async function main(){
     //servidor
@@ -21,7 +22,7 @@ async function main(){
     //rutas
     app.use('/user',loginRoutes)
     app.use('/venta',ordenRoutes)
-
+    app.use('/reportes',reportesRoutes)
     //iniciamos el server
     app.listen(process.env.PORT || app.get('port'),()=> {
         console.log('server on')
