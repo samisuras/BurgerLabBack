@@ -47,3 +47,34 @@ exports.reporteVenta = async(req,res) =>{
         })
     }
 }
+
+exports.reporteIngrediente = async(req,res) => {
+    const {fecha} = req.params
+    const ingredientesSql = "SELECT SUM(i_o.cantidad) AS total, i_o.ingrediente FROM orden "+
+    "JOIN orden_usuario ou ON ou.idorden = orden.idorden "+
+    "JOIN  ingrediente_orden i_o ON i_o.idorden = orden.idorden "+ 
+    "JOIN ingrediente ON ingrediente.nombre = i_o.ingrediente "+
+    "WHERE ou.fecha = ? GROUP BY ingrediente.nombre ORDER BY total; "
+    const ingredientesMes = "SELECT SUM(i_o.cantidad) AS total, i_o.ingrediente FROM orden "+
+    "JOIN orden_usuario ou ON ou.idorden = orden.idorden "+
+    "JOIN  ingrediente_orden i_o ON i_o.idorden = orden.idorden "+ 
+    "JOIN ingrediente ON ingrediente.nombre = i_o.ingrediente "+
+    "WHERE ou.fecha BETWEEN '2020-01-01' AND '2020-12-31' GROUP BY ingrediente.nombre ORDER BY total; "
+    const ingredientesAnual = "SELECT SUM(i_o.cantidad) AS total, i_o.ingrediente FROM orden "+
+    "JOIN orden_usuario ou ON ou.idorden = orden.idorden "+
+    "JOIN  ingrediente_orden i_o ON i_o.idorden = orden.idorden "+ 
+    "JOIN ingrediente ON ingrediente.nombre = i_o.ingrediente "+
+    "WHERE ou.fecha BETWEEN '2020-01-01' AND '2020-12-31' GROUP BY ingrediente.nombre ORDER BY total;"
+    try{
+        const [ingrediente_dia] = await pool.query(ingredientesSql,[fecha])
+        const [ingrediente_mes] = await pool.query(ingredientesMes)
+        const [ingrediente_anual] = await pool.query(ingredientesAnual)
+        res.status(200).json({
+            ingrediente_dia,
+            ingrediente_mes,
+            ingrediente_anual
+        })
+    }catch(error){
+        console.log(error);
+    }
+}
