@@ -18,11 +18,8 @@ exports.order = async (req, res) => {
     sendSmtpEmail.subject = "Orden Recibidia";
     sendSmtpEmail.htmlContent = `<html>
     <body>
-    <h1>Tu orden de tu hamburguesa ha sido recibida</h1>
-    <p>Tu hamburguesa contiene los siguientes ingredientes: </p>
-    <ul>
-    ${ingredients}
-    </ul>
+    <h1>Gracias por tu compra! </h1>
+    <h3>Tu orden de tu hamburguesa ha sido recibida</h3>
     <p>Total: ${total}</p>
     </body>
     </html>`;
@@ -76,7 +73,7 @@ exports.getOrdenes = async (req, res) => {
         "JOIN orden_usuario ou ON ou.idorden = orden.idorden " +
         "JOIN  ingrediente_orden i_o ON i_o.idorden = orden.idorden " +
         "JOIN ingrediente ON ingrediente.nombre = i_o.ingrediente " +
-        "WHERE ou.correo = ?;"
+        "WHERE ou.correo = ? ORDER BY ou.idorden DESC;"
     try {
         const [respuesta] = await pool.query(getOrdenesSql, [correo])
         /*const ordenObj = {
